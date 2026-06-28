@@ -8,4 +8,4 @@
 
 ### 1. კლონირება (Clone)
 ```bash
-git clone <აქ_ჩაჯდება_შენი_ლინკი>
+git clone https://github.com/Stefean/GlovesOn.git
