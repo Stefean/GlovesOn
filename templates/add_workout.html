@@ -1,0 +1,49 @@
+{%extends 'base.html'%}
+
+{%block content%}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 bg-white p-4 rounded shadow-sm">
+        <h3 class="mb-4">Log New Session</h3>
+
+        <form action="{{url_for('add_workout')}}">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Activity Type</label>
+                <select name="workout_type" class="form-select" required>
+                    <option value="" disabled selected>Select activity...</option>
+
+                    <optgroup label="🥊Boxing Gym">
+                        <option value="Sparring">Sparring</option>
+                        <option value="Heavy bag">Heavybag</option>
+                        <option value="Cardio & Pads">Cardio / Padwork</option>
+                    </option>
+
+                    <optgroup label="🏋️ Weightlifting / Strength">
+                        <option value="Push Day">Push Day (chest / Triceps)</option>
+                        <option value="Heavy Bag">Pull Day (Back / Biceps)</option>
+                        <option value="Legs Day">Legs & Shoulders</option>
+                        <option value="Full Body">Full Body Strength</option>
+                    </option>
+                </select>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label fw-bold">Rounds / Sets</label>
+                    <input type="number" name="rounds" class="form-control" min="1" max="30" id="rounds" required>
+                </div>
+                <div class="col">
+                    <label class="form-label fw-bold">Intensity (1-10)</label>
+                    <input type="number" name="intensity" class="form-control" min="1" max="10" id="intensity" required>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label fw-bold">Exercises / Notes</label>
+                <textarea name="notes" class="form-control" rows="3" placeholder="How did it go? Exercises done..." id="notes"></textarea>
+            </div>
+            <button type="submit" class="btn btn-dark w-100">Save Session</button>
+            
+        </form>
+    </div>
+</div>
+{%endblock%}

@@ -1,0 +1,219 @@
+{%extends 'base.html'%} 
+{%block content%}
+
+<div class="row justify-content-center mt-4 mb-5">
+  <div class="col-md-8">
+    <div class="py-3 mb-2">
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <div style="width: 4px; height: 12px; background-color: #1a1a1a; border-radius: 2px;"></div>
+        <span class="text-muted text-uppercase tracking-wider fw-semibold" style="font-size: 11px; letter-spacing: 0.8px;">
+          Training Journal
+        </span>
+      </div>
+      <h2 class="fw-bold m-0" style="color: #111827; letter-spacing: -0.8px; font-size: 28px;">
+        Welcome back
+      </h2>
+      <p class="text-muted small mt-1 mb-0" style="font-size: 13px;">
+        Track your efforts, review your consistency, and lock in today's work.
+      </p>
+    </div>
+
+    <div class="d-flex align-items-baseline gap-4 border-bottom pb-4">
+      <div>
+        <span class="text-muted small text-uppercase" style="letter-spacing: 0.5px; font-size: 11px;">Total Volume</span>
+        <h3 class="fw-bold mb-0 mt-1" style="color: #2b2b2b">
+          {{ total_rounds }}
+          <span class="fs-6 fw-normal text-muted">rounds / sets completed</span>
+        </h3>
+      </div>
+
+      {% if streak >= 2 %}
+      <div class="border-start ps-4 d-flex flex-column justify-content-center">
+        <span class="text-muted small text-uppercase" style="letter-spacing: 0.5px; font-size: 11px;">Current Streak</span>
+        <div class="d-flex align-items-center gap-2 mt-1">
+          <h3 class="fw-bold mb-0" style="color: #c2410c">
+            {{ streak }}
+          </h3>
+          <span style="font-size: 24px; line-height: 1;">🔥</span>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center mb-5">
+  <div class="col-md-8">
+    <h5 class="fw-bold mb-3" style="color: #2b2b2b">Log today's session</h5>
+
+    <form action="{{url_for('add_workout')}}" method="post" class="bg-light p-4 rounded-3 border-0 shadow-sm">
+      <div class="row g-3">
+        <div class="col-sm-6">
+          <label for="workout_type" class="form-label small text-muted fw-bold">Focus</label>
+          <select class="form-select border-0 bg-white shadow-sm" name="workout_type" id="workout_type" required>
+            <option value="" disabled selected>Select session type...</option>
+            <optgroup label="🥊 Boxing Gym">
+              <option value="Heavy Bag">Heavy Bag</option>
+              <option value="Sparring">Sparring</option>
+              <option value="Cardio & Pads">Cardio & Pads</option>
+            </optgroup>
+            <optgroup label="🏋️ Weightlifting / Strength">
+              <option value="Push Day">Push Day (Chest/Triceps)</option>
+              <option value="Pull Day">Pull Day (Back/Biceps)</option>
+              <option value="Legs Day">Legs & Shoulders</option>
+              <option value="Full Body">Full Body Strength</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="col-sm-6">
+          <label for="rounds" class="form-label small text-muted fw-bold">Rounds / Sets</label>
+          <input type="number" class="form-control border-0 bg-white shadow-sm" id="rounds" name="rounds" min="1" max="50" placeholder="0" required />
+        </div>
+      </div>
+
+      <div class="mb-3 mt-3">
+        <label for="intensity" class="form-label small text-muted fw-bold">Intensity / RPE (1-10)</label>
+        <input type="range" class="form-range" name="intensity" id="intensity" min="1" max="10" value="5" />
+        <div class="d-flex justify-content-between text-muted" style="font-size: 11px">
+          <span>Aerobic / Recovery</span>
+          <span>Max Effort / Exhausting</span>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="notes" class="form-label small text-muted fw-bold">Notes / Observations</label>
+        <textarea name="notes" class="form-control border-0 bg-white shadow-sm" id="notes" rows="3" placeholder="Exercises done, weight milestones, or tactical adjustments..."></textarea>
+      </div>
+
+      <div class="d-flex justify-content-end mt-4">
+        <button type="submit" class="btn btn-dark px-4 py-2 small shadow-sm fw-bold" style="border-radius: 6px; font-size: 14px">
+          Commit to Log
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h5 class="fw-bold mb-4" style="color: #2b2b2b">History & Progress</h5>
+
+    {% if not workouts %}
+    <p class="text-muted small italic">No entries recorded yet. Time to hit the gym.</p>
+    {% endif %}
+
+    <div class="position-relative ps-2">
+      {% for workout in workouts %}
+      <div class="mb-4 pb-4 border-bottom">
+        <div class="d-flex justify-content-between align-items-baseline">
+          <span class="fw-bold" style="color: #1a1a1a; font-size: 17px">
+            {{ workout.workout_type }}
+            <span class="text-muted fw-normal fs-6">· {{ workout.rounds }} 
+              {% if 'Day' in workout.workout_type or 'Body' in workout.workout_type %} sets {% else %} rounds {% endif %}
+            </span>
+          </span>
+          <span class="text-muted" style="font-size: 12px">Date: {{ workout.created_at.strftime('%Y-%m-%d') }}</span>
+        </div>
+
+        <div class="mt-2 mb-2 d-flex align-items-center gap-2">
+          <span class="text-muted small" style="font-size: 13px">RPE:</span>
+          <div class="progress" style="height: 6px; width: 100px; background-color: #e5e7eb; border-radius: 10px;">
+            <div class="progress-bar bg-dark" role="progressbar" style="width: calc({{ workout.intensity * 10 }}%)"></div>
+          </div>
+          <span class="fw-bold text-dark ms-1" style="font-size: 13px">{{ workout.intensity }}/10</span>
+        </div>
+
+        {% if workout.notes %}
+        <p class="mb-0 text-secondary mt-2" style="font-size: 14px; font-style: italic; border-left: 2px solid #e5e7eb; padding-left: 10px;">
+          "{{ workout.notes }}"
+        </p>
+        {% endif %}
+
+        <form action="{{ url_for('like_workout', workout_id=workout.id) }}" method="post" class="m-0 d-inline-block">
+            <button type="submit" class="btn p-0 border-0 bg-transparent lh-1" style="font-size: 14px;">
+              {% if workout.is_liked %}
+                <span title="Unlike" style="color: #dc2626;">❤️</span>
+              {% else %}
+                <span title="Like" style="opacity: 0.4; filter: grayscale(100%);">❤️</span>
+              {% endif %}
+            </button>
+          </form>
+
+          <form action="{{ url_for('dislike_workout', workout_id=workout.id) }}" method="post" class="m-0 d-inline-block">
+            <button type="submit" class="btn p-0 border-0 bg-transparent lh-1" style="font-size: 14px;">
+              {% if workout.is_disliked %}
+                <span title="Remove Dislike" style="color: #dc2626;">💔</span> {% else %}
+                <span title="Dislike" style="opacity: 0.4; filter: grayscale(100%);">💔</span>
+              {% endif %}
+            </button>
+          </form>
+
+        <div class="d-flex justify-content-end align-items-center gap-3 mt-2">
+          <button type="button" class="btn text-secondary p-0 border-0 bg-transparent lh-1" style="font-size: 12px; opacity: 0.8;" data-bs-toggle="modal" data-bs-target="#editModal{{ workout.id }}">
+            Edit workout
+          </button>
+
+          <form action="{{ url_for('delete_workout', workout_id=workout.id) }}" method="post" class="m-0 d-inline-block">
+            <button type="submit" class="btn text-danger p-0 border-0 bg-transparent lh-1" style="font-size: 12px; opacity: 0.6;">
+              Remove Workout
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="modal fade" id="editModal{{ workout.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+              <h6 class="modal-title fw-bold">Update Log Entry</h6>
+              <button type="button" class="btn-close small" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('edit_workout', workout_id=workout.id) }}" method="post">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label small text-muted fw-bold">Focus</label>
+                  <select class="form-select bg-light border-0 shadow-sm" name="workout_type" required>
+                    <optgroup label="🥊 Boxing Gym">
+                      <option value="Heavy Bag" {% if workout.workout_type == 'Heavy Bag' %}selected{% endif %}>Heavy Bag</option>
+                      <option value="Sparring" {% if workout.workout_type == 'Sparring' %}selected{% endif %}>Sparring</option>
+                      <option value="Cardio & Pads" {% if workout.workout_type == 'Cardio & Pads' %}selected{% endif %}>Cardio & Pads</option>
+                    </optgroup>
+                    <optgroup label="🏋️ Weightlifting / Strength">
+                      <option value="Push Day" {% if workout.workout_type == 'Push Day' %}selected{% endif %}>Push Day (Chest/Triceps)</option>
+                      <option value="Pull Day" {% if workout.workout_type == 'Pull Day' %}selected{% endif %}>Pull Day (Back/Biceps)</option>
+                      <option value="Legs Day" {% if workout.workout_type == 'Legs Day' %}selected{% endif %}>Legs & Shoulders</option>
+                      <option value="Full Body" {% if workout.workout_type == 'Full Body' %}selected{% endif %}>Full Body Strength</option>
+                    </optgroup>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label small text-muted fw-bold">Rounds / Sets</label>
+                  <input type="number" class="form-control bg-light border-0 shadow-sm" name="rounds" min="1" max="50" value="{{ workout.rounds }}" required />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label small text-muted fw-bold">Intensity / RPE (1-10)</label>
+                  <input type="range" class="form-range" name="intensity" min="1" max="10" value="{{ workout.intensity }}" />
+                </div>
+
+                <div class="mb-2">
+                  <label class="form-label small text-muted fw-bold">Notes / Observations</label>
+                  <textarea class="form-control bg-light border-0 shadow-sm" name="notes" rows="3">{{ workout.notes }}</textarea>
+                </div>
+              </div>
+              <div class="modal-footer border-0 pt-0 d-flex justify-content-end">
+                <button type="button" class="btn btn-light btn-sm font-monospace text-muted px-3" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-dark btn-sm px-4 fw-bold shadow-sm" style="border-radius: 6px;">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{%endblock%}

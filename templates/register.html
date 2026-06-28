@@ -1,0 +1,40 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+<div style="min-height: 80vh; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; background-color: #f3f4f6; padding: 80px 20px 20px 20px;">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="container mt-0 border border-danger text-danger text-center" style="max-width: 400px; background-color: #fef2f2; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 14px;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div style="width: 100%; max-width: 400px; padding: 30px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+    
+    <h2 style="margin-bottom: 25px; font-weight: 700; color: #111827; letter-spacing: -0.5px;">Create Account</h2>
+    
+    <form action="{{ url_for('register') }}" method="post">
+      <div style="margin-bottom: 18px;">
+        <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 6px; color: #4b5563;">Choose Username</label>
+        <input type="text" name="username" class="form-control" style="padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;" required>
+      </div>
+      
+      <div style="margin-bottom: 25px;">
+        <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 6px; color: #4b5563;">Password</label>
+        <input type="password" name="password" class="form-control" style="padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;" required>
+      </div>
+      
+      <button type="submit" class="btn btn-success" style="width: 100%; padding: 10px; font-weight: 600; border-radius: 6px;">Register</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #6b7280; margin-bottom: 0;">
+      Already registered? <a href="{{ url_for('login') }}" style="color: #111827; font-weight: 600; text-decoration: none;">Sign In here</a>
+    </p>
+
+  </div>
+</div>
+
+{% endblock %}
